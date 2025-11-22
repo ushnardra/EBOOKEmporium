@@ -1,0 +1,5 @@
+{
+  "name": "Ebook Emporium",
+  "description": "An online platform to publish, sell, and browse a wide collection of ebooks. Users can filter books by author, genre, and price to find their next favorite read.",
+  "requestFramePermissions": []
+}
