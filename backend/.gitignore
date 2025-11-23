@@ -5,6 +5,8 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Virtual Environment (DO NOT COMMIT)
 venv/
 env/
 ENV/
@@ -16,12 +18,19 @@ build/
 *.log
 db.sqlite3
 db.sqlite3-journal
-/media/
 /staticfiles/
 .env
+
+# Media files (uploaded content - can be large)
+/media/
+media/
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+
+# OS
+.DS_Store
+Thumbs.db
