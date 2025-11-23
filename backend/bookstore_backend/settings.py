@@ -85,10 +85,16 @@ WSGI_APPLICATION = 'bookstore_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Use PostgreSQL in production, SQLite in development
-if os.environ.get('DATABASE_URL'):
+# Database
+# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+
+# Use PostgreSQL in production (Render or Vercel), SQLite in development
+# Vercel provides POSTGRES_URL, POSTGRES_PRISMA_URL, etc.
+DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL') or os.environ.get('POSTGRES_PRISMA_URL')
+
+if DATABASE_URL:
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+        'default': dj_database_url.parse(DATABASE_URL)
     }
 else:
     DATABASES = {
@@ -98,7 +104,14 @@ else:
         }
     }
 
-
+# CSRF Settings for Vercel
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5173', 'http://localhost:3000']
+VERCEL_URL = os.environ.get('VERCEL_URL')
+if VERCEL_URL:
+    CSRF_TRUSTED_ORIGINS.append(f'https://{VERCEL_URL}')
+    CSRF_TRUSTED_ORIGINS.append(f'https://{os.environ.get("VERCEL_PROJECT_PRODUCTION_URL")}') if os.environ.get("VERCEL_PROJECT_PRODUCTION_URL") else None
+    # Allow all vercel subdomains just in case
+    CSRF_TRUSTED_ORIGINS.append('https://*.vercel.app')
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
