@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import { BooksProvider } from './context/BooksContext';
 import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -31,11 +32,11 @@ const App = () => {
           <ScrollToTop />
           <main className="flex-grow">
             <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/browse" element={<BrowsePage />} />
-              <Route path="/sell" element={<SellPage />} />
+              <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+              <Route path="/browse" element={<ProtectedRoute><BrowsePage /></ProtectedRoute>} />
+              <Route path="/sell" element={<ProtectedRoute><SellPage /></ProtectedRoute>} />
               <Route path="/about" element={<AboutPage />} />
-              <Route path="/book/:id" element={<BookDetailPage />} />
+              <Route path="/book/:id" element={<ProtectedRoute><BookDetailPage /></ProtectedRoute>} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/signup" element={<SignupPage />} />
             </Routes>

@@ -1,4 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 import { Genre } from '../types';
 
 import book1 from '../assets/images/book-1.jpg';
@@ -31,7 +32,9 @@ const initialBooks = [
     author: 'J.R.R. Tolkien',
     genre: Genre.FANTASY,
     price: 1199,
+    isFree: true,
     coverImage: book1,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/the_hobbit_tolkien.pdf',
     description: 'Bilbo Baggins, a hobbit, is swept into an epic quest to reclaim the lost Kingdom of Erebor from the fearsome dragon Smaug.',
     rating: 4.8,
     pages: 310,
@@ -44,7 +47,9 @@ const initialBooks = [
     author: 'J.K. Rowling',
     genre: Genre.FANTASY,
     price: 999,
+    isFree: false,
     coverImage: book2,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/85jkr_harrypotter_1.pdf',
     description: 'A young boy discovers he is a wizard and attends Hogwarts School of Witchcraft and Wizardry.',
     rating: 4.9,
     pages: 309,
@@ -57,7 +62,9 @@ const initialBooks = [
     author: 'Frank Herbert',
     genre: Genre.SCIENCE_FICTION,
     price: 1299,
+    isFree: true,
     coverImage: book3,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/Dune Messiah - Frank Herbert.pdf',
     description: 'Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe.',
     rating: 4.7,
     pages: 412,
@@ -70,7 +77,9 @@ const initialBooks = [
     author: 'Orson Scott Card',
     genre: Genre.SCIENCE_FICTION,
     price: 899,
+    isFree: false,
     coverImage: book4,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/EndersGame.pdf',
     description: 'Young Ender Wiggin is recruited by the International Military to lead the fight against the Formics, an insectoid alien race.',
     rating: 4.6,
     pages: 324,
@@ -83,7 +92,9 @@ const initialBooks = [
     author: 'Stieg Larsson',
     genre: Genre.MYSTERY,
     price: 799,
+    isFree: false,
     coverImage: book5,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/Stieg Larsson - Millenium 01 - The Girl With The Dragon Tatoo PDF.pdf',
     description: "Journalist Mikael Blomkvist and hacker Lisbeth Salander investigate the disappearance of a wealthy patriarch's niece from 40 years ago.",
     rating: 4.4,
     pages: 672,
@@ -96,7 +107,9 @@ const initialBooks = [
     author: 'Agatha Christie',
     genre: Genre.MYSTERY,
     price: 699,
+    isFree: true,
     coverImage: book6,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/And Then There Were None.pdf',
     description: 'Ten strangers are invited to an isolated island by a mysterious host, and one by one, they start dying.',
     rating: 4.8,
     pages: 264,
@@ -109,7 +122,9 @@ const initialBooks = [
     author: 'Jane Austen',
     genre: Genre.ROMANCE,
     price: 499,
+    isFree: false,
     coverImage: book7,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/Pride.pdf',
     description: 'Elizabeth Bennet navigates the societal pressures of 19th-century England while dealing with the proud Mr. Darcy.',
     rating: 4.6,
     pages: 480,
@@ -122,7 +137,9 @@ const initialBooks = [
     author: 'Nicholas Sparks',
     genre: Genre.ROMANCE,
     price: 750,
+    isFree: true,
     coverImage: book8,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/the-notebook.pdf',
     description: 'An elderly man reads to a woman with dementia from a notebook, telling the story of two young lovers separated by war and class.',
     rating: 4.5,
     pages: 214,
@@ -135,7 +152,9 @@ const initialBooks = [
     author: 'Dan Brown',
     genre: Genre.THRILLER,
     price: 850,
+    isFree: false,
     coverImage: book9,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/The Da Vinci Code.pdf',
     description: 'Symbologist Robert Langdon and cryptologist Sophie Neveu investigate a murder in the Louvre and uncover a religious mystery.',
     rating: 3.9,
     pages: 480,
@@ -148,7 +167,9 @@ const initialBooks = [
     author: 'Gillian Flynn',
     genre: Genre.THRILLER,
     price: 950,
+    isFree: false,
     coverImage: book10,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/15-05-2021-082725Gone-Girl-Gillian-Flynn.pdf',
     description: 'On his fifth wedding anniversary, Nick Dunne reports that his beautiful wife, Amy, has gone missing.',
     rating: 4.1,
     pages: 432,
@@ -161,7 +182,9 @@ const initialBooks = [
     author: 'Yuval Noah Harari',
     genre: Genre.NON_FICTION,
     price: 1499,
+    isFree: true,
     coverImage: book11,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/yuval_noah_harari-sapiens_a_brief_histor.pdf',
     description: 'A survey of the history of humankind from the Stone Age to the twenty-first century.',
     rating: 4.7,
     pages: 464,
@@ -174,7 +197,9 @@ const initialBooks = [
     author: 'Tara Westover',
     genre: Genre.NON_FICTION,
     price: 1150,
+    isFree: false,
     coverImage: book12,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/e1b1a1022119dc62a62d642011672e528fbb.pdf',
     description: 'A memoir about a young woman who, kept out of school, leaves her survivalist family and goes on to earn a PhD from Cambridge University.',
     rating: 4.8,
     pages: 352,
@@ -187,7 +212,9 @@ const initialBooks = [
     author: 'Stephen King',
     genre: Genre.HORROR,
     price: 1599,
+    isFree: false,
     coverImage: book13,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/On Writing_ A Memoir of the Craft - Stephen King.pdf',
     description: 'Seven adults return to their hometown to confront a shape-shifting evil that terrorized them as teenagers.',
     rating: 4.5,
     pages: 1168,
@@ -200,7 +227,9 @@ const initialBooks = [
     author: 'Bram Stoker',
     genre: Genre.HORROR,
     price: 550,
+    isFree: true,
     coverImage: book14,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/05dracula.pdf',
     description: 'The vampire Count Dracula attempts to move from Transylvania to England so that he may find new blood and spread his undead curse.',
     rating: 4.4,
     pages: 432,
@@ -213,7 +242,9 @@ const initialBooks = [
     author: 'Maurice Sendak',
     genre: Genre.CHILDREN,
     price: 1450,
+    isFree: false,
     coverImage: book15,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/ENGLISH-NOTES.pdf',
     description: 'Max, a young boy dressed in a wolf suit, sails to an island inhabited by the Wild Things, who declare him king.',
     rating: 4.9,
     pages: 48,
@@ -226,7 +257,9 @@ const initialBooks = [
     author: 'E.B. White',
     genre: Genre.CHILDREN,
     price: 650,
+    isFree: true,
     coverImage: book16,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/Charlotte_s_Web_.pdf',
     description: 'A pig named Wilbur is saved from slaughter by a spider named Charlotte, who writes messages in her web.',
     rating: 4.8,
     pages: 192,
@@ -239,7 +272,9 @@ const initialBooks = [
     author: 'Walter Isaacson',
     genre: Genre.BIOGRAPHY,
     price: 1600,
+    isFree: false,
     coverImage: book17,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/DuPlessisR.pdf',
     description: 'The exclusive biography of Steve Jobs, based on more than forty interviews with Jobs conducted over two years.',
     rating: 4.6,
     pages: 656,
@@ -252,7 +287,9 @@ const initialBooks = [
     author: 'Michelle Obama',
     genre: Genre.BIOGRAPHY,
     price: 1350,
+    isFree: true,
     coverImage: book18,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/Becoming_Young_Reader.pdf',
     description: 'A memoir by the former First Lady of the United States, describing her roots and how she found her voice.',
     rating: 4.9,
     pages: 448,
@@ -265,7 +302,9 @@ const initialBooks = [
     author: 'Jared Diamond',
     genre: Genre.HISTORY,
     price: 1250,
+    isFree: false,
     coverImage: book19,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/Jared_Diamond-Guns_Germs_and_Steel.pdf',
     description: 'A trans-disciplinary non-fiction book that attempts to explain why Eurasian civilizations have survived and conquered others.',
     rating: 4.3,
     pages: 480,
@@ -278,7 +317,9 @@ const initialBooks = [
     author: 'Anne Frank',
     genre: Genre.HISTORY,
     price: 599,
+    isFree: true,
     coverImage: book20,
+    pdfFile: 'http://127.0.0.1:8000/media/books/pdfs/anne_frank_-_the_diary_of_a_young_girl_book_website.pdf',
     description: 'The writings from the Dutch-language diary kept by Anne Frank while she was in hiding for two years with her family during the Nazi occupation of the Netherlands.',
     rating: 4.8,
     pages: 304,
@@ -288,19 +329,101 @@ const initialBooks = [
 ];
 
 export const BooksProvider = ({ children }) => {
-  const [books, setBooks] = useState(initialBooks);
+  const { token } = useAuth();
+  // Start with empty array, will be populated by useEffect
+  const [localBooks, setLocalBooks] = useState([]);
+
+  useEffect(() => {
+    fetch('http://127.0.0.1:8000/api/books/')
+      .then(res => res.json())
+      .then(data => {
+        const mappedApiBooks = [];
+        if (Array.isArray(data) && data.length > 0) {
+          data.forEach(apiBook => {
+            mappedApiBooks.push({
+              id: `api-${apiBook.id}`, // Prefix with 'api-' to avoid conflicts with initialBooks
+              title: apiBook.title,
+              author: apiBook.author,
+              genre: apiBook.genre,
+              price: parseFloat(apiBook.price),
+              coverImage: apiBook.cover_image,
+              description: apiBook.description,
+              rating: apiBook.comments.length > 0 ? apiBook.comments.reduce((sum, c) => sum + c.rating, 0) / apiBook.comments.length : 0,
+              reviews: apiBook.comments.map(c => ({
+                  id: c.id,
+                  userName: c.user_username,
+                  comment: c.text,
+                  rating: c.rating,
+                  date: new Date(c.created_at).toLocaleDateString()
+              })),
+              isFree: apiBook.is_free,
+              pdfFile: apiBook.pdf_file && apiBook.pdf_file.startsWith('/') ? `http://127.0.0.1:8000${apiBook.pdf_file}` : apiBook.pdf_file,
+              pages: 0,
+              publisher: 'Unknown',
+              publicationDate: new Date(apiBook.created_at).toISOString().split('T')[0],
+              content: apiBook.description // Use description as content for preview
+            });
+          });
+        }
+        
+        // Prepare initial books with content
+        const processedInitialBooks = initialBooks.map(book => ({
+          ...book,
+          reviews: [],
+          content: "Chapter 1\n\nIt was a bright cold day..."
+        }));
+        
+        // Combine: API books first, then initial books (no duplicates since IDs are different)
+        const combinedBooks = [...mappedApiBooks, ...processedInitialBooks];
+        setLocalBooks(combinedBooks);
+      })
+      .catch(err => console.log("Backend not running or error fetching books"));
+  }, []);
 
   const addBook = (bookData) => {
+    // Add book optimistically to local state for immediate UI feedback
+    // The book is already saved to backend via API call in SellPage
     const newBook = {
       ...bookData,
       id: new Date().toISOString(),
-      rating: 0, // New books are unrated initially
+      rating: 0,
+      reviews: [],
+      content: "No content available.",
     };
-    setBooks(prevBooks => [newBook, ...prevBooks]);
+    setLocalBooks(prevBooks => [newBook, ...prevBooks]);
+  };
+
+  const addReview = async (bookId, review) => {
+    // Optimistic update
+    setLocalBooks(prevBooks => prevBooks.map(book => {
+      if (book.id === bookId) {
+        const newReviews = [...(book.reviews || []), review];
+        const totalRating = newReviews.reduce((sum, r) => sum + r.rating, 0);
+        const newRating = totalRating / newReviews.length;
+        return { ...book, reviews: newReviews, rating: parseFloat(newRating.toFixed(1)) };
+      }
+      return book;
+    }));
+
+    // API Call
+    if (token) {
+      try {
+        await fetch(`http://127.0.0.1:8000/api/books/${bookId}/comments/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Token ${token}`
+          },
+          body: JSON.stringify({ text: review.comment, rating: review.rating })
+        });
+      } catch (e) {
+        console.error("Failed to post review", e);
+      }
+    }
   };
 
   return (
-    <BooksContext.Provider value={{ books, addBook }}>
+    <BooksContext.Provider value={{ books: localBooks, addBook, addReview }}>
       {children}
     </BooksContext.Provider>
   );

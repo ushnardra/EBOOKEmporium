@@ -8,6 +8,7 @@ const BrowsePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [minPrice, setMinPrice] = useState(0);
+  const [priceFilter, setPriceFilter] = useState('all'); // 'all', 'free', 'paid'
   const [minRating, setMinRating] = useState(0);
   const [sortOrder, setSortOrder] = useState('relevance');
 
@@ -16,10 +17,18 @@ const BrowsePage = () => {
       const matchesSearch = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         book.author.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesGenre = selectedGenre === 'all' || book.genre === selectedGenre;
-      const matchesPrice = book.price >= minPrice;
+      
+      let matchesPriceType = true;
+      if (priceFilter === 'free') {
+        matchesPriceType = book.isFree;
+      } else if (priceFilter === 'paid') {
+        matchesPriceType = !book.isFree;
+      }
+
+      const matchesPriceValue = book.isFree || book.price >= minPrice;
       const matchesRating = book.rating >= minRating;
 
-      return matchesSearch && matchesGenre && matchesPrice && matchesRating;
+      return matchesSearch && matchesGenre && matchesPriceType && matchesPriceValue && matchesRating;
     });
 
     const sortedBooks = [...filtered].sort((a, b) => {
@@ -38,13 +47,13 @@ const BrowsePage = () => {
 
     return sortedBooks;
 
-  }, [books, searchTerm, selectedGenre, minPrice, minRating, sortOrder]);
+  }, [books, searchTerm, selectedGenre, minPrice, priceFilter, minRating, sortOrder]);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md mb-8">
         <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">Browse Our Collection</h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
           <div className="lg:col-span-2">
             <label htmlFor="search" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
               Search by Title or Author
@@ -72,6 +81,21 @@ const BrowsePage = () => {
               {Object.values(Genre).map(genre => (
                 <option key={genre} value={genre}>{genre}</option>
               ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="price-type" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Price Type
+            </label>
+            <select
+              id="price-type"
+              value={priceFilter}
+              onChange={(e) => setPriceFilter(e.target.value)}
+              className="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-700 dark:text-white"
+            >
+              <option value="all">All</option>
+              <option value="free">Free</option>
+              <option value="paid">Paid</option>
             </select>
           </div>
           <div>
@@ -107,21 +131,23 @@ const BrowsePage = () => {
               <option value="rating-desc">Highest Rated</option>
             </select>
           </div>
-          <div className="lg:col-span-full">
-            <label htmlFor="price" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-              Price Above: ₹{minPrice.toFixed(2)}
-            </label>
-            <input
-              type="range"
-              id="price"
-              min="0"
-              max="3000"
-              step="50"
-              value={minPrice}
-              onChange={(e) => setMinPrice(Number(e.target.value))}
-              className="mt-2 block w-full"
-            />
-          </div>
+          {priceFilter !== 'free' && (
+            <div className="lg:col-span-full">
+              <label htmlFor="price" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                Price Above: ₹{minPrice.toFixed(2)}
+              </label>
+              <input
+                type="range"
+                id="price"
+                min="0"
+                max="3000"
+                step="50"
+                value={minPrice}
+                onChange={(e) => setMinPrice(Number(e.target.value))}
+                className="mt-2 block w-full"
+              />
+            </div>
+          )}
         </div>
       </div>
 

@@ -19,7 +19,9 @@ const BookCard = ({ book }) => {
           <span className="inline-block bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full mb-3 self-start">{book.genre}</span>
           <p className="text-sm text-slate-500 dark:text-slate-400 flex-grow mb-4">{book.description.substring(0, 80)}...</p>
           <div className="flex items-center justify-end mt-auto pt-2">
-            <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">₹{book.price.toFixed(2)}</p>
+            <p className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+              {book.isFree ? 'Free' : `₹${book.price.toFixed(2)}`}
+            </p>
           </div>
         </div>
       </div>

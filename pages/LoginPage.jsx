@@ -4,16 +4,20 @@ import { useAuth } from '../context/AuthContext';
 import '../auth.css';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login, error } = useAuth();
+  const [localError, setLocalError] = useState('');
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await login(email, password);
-    if (success) {
+    setLocalError('');
+    const result = await login(username, password);
+    if (result.success) {
       navigate('/');
+    } else {
+      setLocalError(result.error || 'Login failed');
     }
   };
 
@@ -21,15 +25,15 @@ const LoginPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <h2 className="auth-title">Welcome Back</h2>
-        {error && <div className="error-message">{error}</div>}
+        {localError && <div className="error-message">{localError}</div>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="input-group">
             <input
-              type="email"
+              type="text"
               className="auth-input"
-              placeholder="Email Address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>

@@ -4,17 +4,21 @@ import { useAuth } from '../context/AuthContext';
 import '../auth.css';
 
 const SignupPage = () => {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signup, error } = useAuth();
+  const [localError, setLocalError] = useState('');
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await signup(name, email, password);
-    if (success) {
-      navigate('/');
+    setLocalError('');
+    const result = await signup(username, email, password);
+    if (result.success) {
+      navigate('/login'); // Redirect to login after signup
+    } else {
+      setLocalError(result.error || 'Signup failed');
     }
   };
 
@@ -22,15 +26,15 @@ const SignupPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <h2 className="auth-title">Create Account</h2>
-        {error && <div className="error-message">{error}</div>}
+        {localError && <div className="error-message">{localError}</div>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="input-group">
             <input
               type="text"
               className="auth-input"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>

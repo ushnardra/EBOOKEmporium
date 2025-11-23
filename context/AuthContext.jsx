@@ -1,79 +1,79 @@
-import React, { createContext, useState, useContext } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext();
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [loading, setLoading] = useState(true);
 
-  const login = async (email, password) => {
-    setError(null);
-    try {
-      const response = await fetch(`http://localhost:3001/users?email=${email}&password=${password}`);
-      const users = await response.json();
-      if (users.length > 0) {
-        setUser(users[0]);
-        return true;
-      } else {
-        setError('Invalid email or password');
-        return false;
-      }
-    } catch (err) {
-      setError('Failed to connect to the server');
-      return false;
+  useEffect(() => {
+    if (token) {
+      // Optionally verify token with backend
+      // For now, just assume valid if present, or decode if JWT (but we use simple token)
+      // We might want to fetch user details here
+      setUser({ username: localStorage.getItem('username') });
     }
-  };
+    setLoading(false);
+  }, [token]);
 
-  const signup = async (name, email, password) => {
-    setError(null);
+  const login = async (username, password) => {
     try {
-      // Check if user already exists
-      const checkResponse = await fetch(`http://localhost:3001/users?email=${email}`);
-      const existingUsers = await checkResponse.json();
-      
-      if (existingUsers.length > 0) {
-        setError('User already exists with this email');
-        return false;
-      }
-
-      // Create new user
-      const newUser = { name, email, password, id: Date.now().toString() };
-      const response = await fetch('http://localhost:3001/users', {
+      const response = await fetch('http://127.0.0.1:8000/api/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newUser),
+        body: JSON.stringify({ username, password }),
       });
-
+      const data = await response.json();
       if (response.ok) {
-        setUser(newUser);
-        return true;
+        setToken(data.token);
+        setUser({ username: data.username });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        return { success: true };
       } else {
-        setError('Failed to create account');
-        return false;
+        return { success: false, error: data.error };
       }
-    } catch (err) {
-      setError('Failed to connect to the server');
-      return false;
+    } catch (error) {
+      return { success: false, error: 'Network error' };
+    }
+  };
+
+  const signup = async (username, email, password) => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/signup/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, email, password }),
+      });
+      if (response.ok) {
+        // Auto login after signup? or just return success
+        return { success: true };
+      } else {
+        const data = await response.json();
+        return { success: false, error: JSON.stringify(data) };
+      }
+    } catch (error) {
+      return { success: false, error: 'Network error' };
     }
   };
 
   const logout = () => {
+    setToken(null);
     setUser(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, error }}>
+    <AuthContext.Provider value={{ user, token, login, signup, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
 };

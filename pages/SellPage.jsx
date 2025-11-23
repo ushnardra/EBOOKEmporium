@@ -1,63 +1,111 @@
 import React, { useState } from 'react';
-import { useBooks } from '../context/BooksContext';
+import { useAuth } from '../context/AuthContext';
 import { Genre } from '../types';
 
 const SellPage = () => {
-  const { addBook } = useBooks();
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [genre, setGenre] = useState(Genre.FANTASY);
   const [price, setPrice] = useState('');
+  const [isFree, setIsFree] = useState(false);
   const [description, setDescription] = useState('');
-  const [coverImage, setCoverImage] = useState('');
+  const [coverImage, setCoverImage] = useState(null); // File object
+  const [pdfFile, setPdfFile] = useState(null); // File object
   const [imagePreview, setImagePreview] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const { token } = useAuth();
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0];
     if (file) {
+      setCoverImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        const result = reader.result;
-        setCoverImage(result);
-        setImagePreview(result);
+        setImagePreview(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handlePdfChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPdfFile(file);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !author || !price || !description || !coverImage) {
-      alert('Please fill out all fields and upload a cover image.');
+    if (!title || !author || (!isFree && !price) || !description || !coverImage || !pdfFile) {
+      alert('Please fill out all fields and upload both cover image and PDF.');
       return;
-    };
+    }
 
-    addBook({
-      title,
-      author,
-      genre,
-      price: parseFloat(price),
-      description,
-      coverImage
-    });
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('author', author);
+    formData.append('genre', genre);
+    formData.append('description', description);
+    formData.append('price', isFree ? 0 : price);
+    formData.append('is_free', isFree ? 'True' : 'False'); // Send as string for Django boolean field if needed, or just boolean
+    formData.append('cover_image', coverImage);
+    formData.append('pdf_file', pdfFile);
 
-    // Reset form and show success message
-    setTitle('');
-    setAuthor('');
-    setGenre(Genre.FANTASY);
-    setPrice('');
-    setDescription('');
-    setCoverImage('');
-    setImagePreview(null);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    try {
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Token ${token}`;
+      }
+
+      console.log('Uploading book to backend...');
+      const response = await fetch('http://127.0.0.1:8000/api/books/', {
+        method: 'POST',
+        headers: headers,
+        body: formData,
+      });
+
+      console.log('Response status:', response.status);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Book uploaded successfully:', data);
+        // Reset form and show success message
+        setTitle('');
+        setAuthor('');
+        setGenre(Genre.FANTASY);
+        setPrice('');
+        setIsFree(false);
+        setDescription('');
+        setCoverImage(null);
+        setPdfFile(null);
+        setImagePreview(null);
+        setSubmitted(true);
+        setTimeout(() => setSubmitted(false), 3000);
+        // Book will appear automatically when refreshed from API
+        // No need to call addBook here as it causes duplicates 
+      } else {
+        let errorMessage = `Server returned status ${response.status}`;
+        try {
+          const errorData = await response.json();
+          console.error('Failed to upload book:', errorData);
+          errorMessage = JSON.stringify(errorData, null, 2);
+        } catch (e) {
+          const errorText = await response.text();
+          console.error('Failed to upload book (text):', errorText);
+          errorMessage = errorText;
+        }
+        alert('Failed to upload book:\n' + errorMessage);
+      }
+    } catch (error) {
+      console.error('Error uploading book:', error);
+      alert('Error uploading book: ' + error.message + '\n\nMake sure the backend server is running on http://127.0.0.1:8000');
+    }
   };
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-8 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-6">Publish Your Ebook</h1>
+        <h1 className="text-3xl font-bold text-slate-800 dark:text-white mb-6">Upload Your Book</h1>
 
         {submitted && (
           <div className="bg-green-100 dark:bg-green-900 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 px-4 py-3 rounded relative mb-4" role="alert">
@@ -132,20 +180,54 @@ const SellPage = () => {
               </select>
             </div>
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                Price (₹)
-              </label>
-              <input
-                type="number"
-                id="price"
-                value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                min="0"
-                step="0.01"
-                required
-                className="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-700 dark:text-white"
-              />
+              <div className="flex items-center mb-2">
+                <input
+                  type="checkbox"
+                  id="isFree"
+                  checked={isFree}
+                  onChange={(e) => setIsFree(e.target.checked)}
+                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
+                <label htmlFor="isFree" className="ml-2 block text-sm text-slate-700 dark:text-slate-300">
+                  Free to Read?
+                </label>
+              </div>
+              {!isFree && (
+                <>
+                  <label htmlFor="price" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Price (₹)
+                  </label>
+                  <input
+                    type="number"
+                    id="price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    min="0"
+                    step="0.01"
+                    required={!isFree}
+                    className="mt-1 block w-full rounded-md border-slate-300 dark:border-slate-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-slate-700 dark:text-white"
+                  />
+                </>
+              )}
             </div>
+          </div>
+          <div>
+            <label htmlFor="pdf-upload" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+              Upload PDF Book
+            </label>
+            <input
+              type="file"
+              id="pdf-upload"
+              accept=".pdf"
+              onChange={handlePdfChange}
+              required
+              className="mt-1 block w-full text-sm text-slate-500 dark:text-slate-400
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-full file:border-0
+                file:text-sm file:font-semibold
+                file:bg-indigo-50 file:text-indigo-700
+                hover:file:bg-indigo-100"
+            />
           </div>
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -164,7 +246,7 @@ const SellPage = () => {
             <button
               type="submit"
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400 dark:disabled:bg-indigo-800"
-              disabled={!title || !author || !price || !description || !coverImage}
+              disabled={!title || !author || (!isFree && !price) || !description || !coverImage || !pdfFile}
             >
               Publish Book
             </button>

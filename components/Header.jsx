@@ -32,7 +32,7 @@ const Header = () => {
                         <div className="ml-10 flex items-baseline space-x-4">
                             <NavLink to="/" className={navLink}>Home</NavLink>
                             <NavLink to="/browse" className={navLink}>Browse Books</NavLink>
-                            <NavLink to="/sell" className={navLink}>Sell a Book</NavLink>
+                            <NavLink to="/sell" className={navLink}>Upload a Book</NavLink>
                             <NavLink to="/about" className={navLink}>About</NavLink>
                             {user ? (
                                 <div className="flex items-center gap-4 ml-4">
@@ -81,7 +81,7 @@ const Header = () => {
                     <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                         <NavLink to="/" className={navLink} onClick={()=> setIsMenuOpen(false)}>Home</NavLink>
                         <NavLink to="/browse" className={navLink} onClick={()=> setIsMenuOpen(false)}>Browse Books</NavLink>
-                        <NavLink to="/sell" className={navLink} onClick={()=> setIsMenuOpen(false)}>Sell a Book</NavLink>
+                        <NavLink to="/sell" className={navLink} onClick={()=> setIsMenuOpen(false)}>Upload a Book</NavLink>
                         <NavLink to="/about" className={navLink} onClick={()=> setIsMenuOpen(false)}>About</NavLink>
                         {user ? (
                             <>
