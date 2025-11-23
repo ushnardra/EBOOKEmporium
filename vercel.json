@@ -1,41 +1,24 @@
 {
-    "builds": [
+    "rewrites": [
         {
-            "src": "backend/bookstore_backend/wsgi.py",
-            "use": "@vercel/python",
-            "config": {
-                "maxLambdaSize": "15mb",
-                "runtime": "python3.9"
-            }
+            "source": "/api/(.*)",
+            "destination": "/api/index.py"
         },
         {
-            "src": "package.json",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "dist"
-            }
-        }
-    ],
-    "routes": [
-        {
-            "src": "/admin/(.*)",
-            "dest": "backend/bookstore_backend/wsgi.py"
+            "source": "/admin/(.*)",
+            "destination": "/api/index.py"
         },
         {
-            "src": "/static/(.*)",
-            "dest": "backend/bookstore_backend/wsgi.py"
+            "source": "/static/(.*)",
+            "destination": "/api/index.py"
         },
         {
-            "src": "/api/(.*)",
-            "dest": "backend/bookstore_backend/wsgi.py"
+            "source": "/media/(.*)",
+            "destination": "/api/index.py"
         },
         {
-            "src": "/media/(.*)",
-            "dest": "backend/bookstore_backend/wsgi.py"
-        },
-        {
-            "src": "/(.*)",
-            "dest": "/index.html"
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
