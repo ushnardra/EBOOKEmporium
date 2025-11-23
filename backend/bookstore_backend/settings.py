@@ -104,14 +104,7 @@ else:
         }
     }
 
-# CSRF Settings for Vercel
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5173', 'http://localhost:3000']
-VERCEL_URL = os.environ.get('VERCEL_URL')
-if VERCEL_URL:
-    CSRF_TRUSTED_ORIGINS.append(f'https://{VERCEL_URL}')
-    CSRF_TRUSTED_ORIGINS.append(f'https://{os.environ.get("VERCEL_PROJECT_PRODUCTION_URL")}') if os.environ.get("VERCEL_PROJECT_PRODUCTION_URL") else None
-    # Allow all vercel subdomains just in case
-    CSRF_TRUSTED_ORIGINS.append('https://*.vercel.app')
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
