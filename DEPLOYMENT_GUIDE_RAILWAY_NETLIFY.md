@@ -32,8 +32,8 @@ This guide will help you deploy your EBook Emporium application.
     *   Click on the newly created service card.
     *   Go to **Settings**.
     *   **Root Directory**: Set this to `/backend`.
-    *   **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`
-    *   **Start Command**: `gunicorn bookstore_backend.wsgi` (Railway might auto-detect the Procfile, but good to double check).
+    *   **Build Command**: `pip install -r requirements.txt && python manage.py collectstatic --noinput`
+    *   **Start Command**: `python manage.py migrate && gunicorn bookstore_backend.wsgi` (or just leave empty if using the Procfile I created).
 4.  **Add a Database**:
     *   Right-click on the canvas (or click "New") > **Database** > **PostgreSQL**.
     *   This will create a database service.
