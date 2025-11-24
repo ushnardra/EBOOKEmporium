@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Genre } from '../types';
+import { API_URL } from '../config';
 
 const SellPage = () => {
   const [title, setTitle] = useState('');
@@ -58,7 +59,7 @@ const SellPage = () => {
       }
 
       console.log('Uploading book to backend...');
-      const response = await fetch('http://127.0.0.1:8000/api/books/', {
+      const response = await fetch(`${API_URL}/api/books/`, {
         method: 'POST',
         headers: headers,
         body: formData,
@@ -98,7 +99,7 @@ const SellPage = () => {
       }
     } catch (error) {
       console.error('Error uploading book:', error);
-      alert('Error uploading book: ' + error.message + '\n\nMake sure the backend server is running on http://127.0.0.1:8000');
+      alert('Error uploading book: ' + error.message + `\n\nMake sure the backend server is running on ${API_URL}`);
     }
   };
 

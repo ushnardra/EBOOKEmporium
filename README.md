@@ -2,7 +2,7 @@
 
 > A modern, dynamic web application for browsing, buying, and selling ebooks. Built with React, Vite, and Django.
 
-![Home Page](assets/images/home_page.png)
+![Home Page](frontend/assets/images/home_page.png)
 
 ## 🌟 Overview
 
@@ -12,7 +12,7 @@
 
 | Browse Collection | Login Page |
 |:---:|:---:|
-| ![Browse Page](assets/images/browse_page.png) | ![Login Page](assets/images/login_page.png) |
+| ![Browse Page](frontend/assets/images/browse_page.png) | ![Login Page](frontend/assets/images/login_page.png) |
 
 ## 🚀 Features
 
@@ -42,15 +42,16 @@
 
 ```
 ebook-emporium/
-├── assets/           # Static assets (images, icons)
 ├── backend/          # Django backend application
 │   ├── api/          # API endpoints and logic
 │   ├── media/        # User-uploaded content (book covers, PDFs)
 │   └── ...
-├── components/       # Reusable React components
-├── context/          # Global state management (Auth, Books)
-├── pages/            # Application views (Home, Browse, Login, etc.)
-├── App.jsx           # Main frontend entry point
+├── frontend/         # React frontend application
+│   ├── assets/       # Static assets (images, icons)
+│   ├── components/   # Reusable React components
+│   ├── context/      # Global state management (Auth, Books)
+│   ├── pages/        # Application views (Home, Browse, Login, etc.)
+│   └── App.jsx       # Main frontend entry point
 └── README.md         # Project documentation
 ```
 
@@ -74,6 +75,8 @@ Follow these steps to set up the project locally.
 
 2.  **Frontend Setup**
     ```bash
+    cd frontend
+
     # Install dependencies
     npm install
 
