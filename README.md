@@ -20,7 +20,8 @@
 -   **� Extensive Collection**: Browse a curated list of ebooks with detailed metadata, including authors, genres, and ratings.
 -   **� Advanced Search**: Quickly find books by title or author.
 -   **🔐 Secure Authentication**: Robust user management system with secure sign-up and login capabilities.
--   **📖 Interactive Details**: View comprehensive book details, reviews, and pricing information.
+-   **📖 In-App Reading**: Read full books directly within the website using the integrated PDF viewer.
+-   **⬇️ PDF Downloads**: Download your favorite books as PDFs for offline reading.
 -   **📤 Book Uploads**: Users can upload and list their own ebooks for sale.
 -   **⭐ Rating System**: Rate and review books to share your opinion with the community.
 
