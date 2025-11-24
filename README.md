@@ -1,37 +1,56 @@
-# Ebook Emporium
+# 📚 Ebook Emporium
 
-A modern, dynamic web application for browsing, buying, and selling ebooks. Built with React and Vite, featuring a sleek user interface and a mock backend for seamless data management.
+> A modern, dynamic web application for browsing, buying, and selling ebooks. Built with React, Vite, and Django.
+
+![Home Page](assets/images/home_page.png)
+
+## 🌟 Overview
+
+**Ebook Emporium** is a feature-rich platform designed for book lovers. It offers a seamless experience for discovering new titles, reading descriptions, and managing a personal library. With a sleek, responsive design and a robust backend, it bridges the gap between readers and their next favorite book.
+
+## � Screenshots
+
+| Browse Collection | Login Page |
+|:---:|:---:|
+| ![Browse Page](assets/images/browse_page.png) | ![Login Page](assets/images/login_page.png) |
 
 ## 🚀 Features
 
--   **📚 Browse Collection**: Explore a wide variety of ebooks with detailed descriptions and ratings.
--   **🔍 Book Details**: View in-depth information about each book, including reviews and pricing.
--   **💰 Sell Your Books**: Easy-to-use interface for users to list their own ebooks for sale.
--   **🔐 User Authentication**: Secure Sign Up and Login functionality to manage your account.
--   **⭐ Star Ratings**: Interactive rating system for books.
--   **🎨 Modern UI**: Responsive and aesthetically pleasing design with glassmorphism effects and smooth animations.
--   **📱 Responsive Design**: Fully optimized for desktop, tablet, and mobile devices.
+-   **🎨 Modern UI/UX**: A visually stunning interface featuring glassmorphism, smooth animations, and a responsive layout that works perfectly on all devices.
+-   **� Extensive Collection**: Browse a curated list of ebooks with detailed metadata, including authors, genres, and ratings.
+-   **� Advanced Search**: Quickly find books by title or author.
+-   **🔐 Secure Authentication**: Robust user management system with secure sign-up and login capabilities.
+-   **📖 Interactive Details**: View comprehensive book details, reviews, and pricing information.
+-   **📤 Book Uploads**: Users can upload and list their own ebooks for sale.
+-   **⭐ Rating System**: Rate and review books to share your opinion with the community.
 
 ## 🛠️ Tech Stack
 
--   **Frontend Framework**: [React](https://react.dev/) (v19)
+### Frontend
+-   **Framework**: [React](https://react.dev/) (v18+)
 -   **Build Tool**: [Vite](https://vitejs.dev/)
--   **Routing**: [React Router](https://reactrouter.com/) (v7)
--   **Styling**: Modern Vanilla CSS
--   **Mock Backend**: [JSON Server](https://github.com/typicode/json-server)
+-   **Routing**: [React Router](https://reactrouter.com/)
+-   **Styling**: Modern Vanilla CSS with CSS Variables & Flexbox/Grid
+
+### Backend
+-   **Framework**: [Django](https://www.djangoproject.com/)
+-   **API**: Django REST Framework
+-   **Database**: SQLite (Development) / PostgreSQL (Production)
 
 ## 📂 Project Structure
 
 ```
 ebook-emporium/
-├── components/       # Reusable UI components (Header, Footer, BookCard, etc.)
-├── pages/            # Application pages (Home, Browse, Login, Sell, etc.)
-├── context/          # React Context for state management
 ├── assets/           # Static assets (images, icons)
-├── db.json           # Mock database file
-├── App.jsx           # Main application component
-├── main.jsx          # Entry point
-└── ...
+├── backend/          # Django backend application
+│   ├── api/          # API endpoints and logic
+│   ├── media/        # User-uploaded content (book covers, PDFs)
+│   └── ...
+├── components/       # Reusable React components
+├── context/          # Global state management (Auth, Books)
+├── pages/            # Application views (Home, Browse, Login, etc.)
+├── App.jsx           # Main frontend entry point
+└── README.md         # Project documentation
 ```
 
 ## ⚡ Getting Started
@@ -40,8 +59,9 @@ Follow these steps to set up the project locally.
 
 ### Prerequisites
 
--   Node.js (v16 or higher)
--   npm (v7 or higher)
+-   **Node.js** (v16 or higher)
+-   **Python** (v3.8 or higher)
+-   **pip** (Python package manager)
 
 ### Installation
 
@@ -51,33 +71,36 @@ Follow these steps to set up the project locally.
     cd ebook-emporium
     ```
 
-2.  **Install dependencies**
+2.  **Frontend Setup**
     ```bash
+    # Install dependencies
     npm install
-    ```
 
-### Running the Application
-
-To run the application, you need to start both the mock backend and the frontend development server.
-
-1.  **Start the Mock Backend** (Open a new terminal)
-    ```bash
-    npx json-server --watch db.json --port 3001
-    ```
-
-2.  **Start the Frontend** (In a separate terminal)
-    ```bash
+    # Start the development server
     npm run dev
     ```
 
-3.  **Open in Browser**
-    Visit `http://localhost:3000` (or the port shown in your terminal) to view the app.
+3.  **Backend Setup** (Open a new terminal)
+    ```bash
+    cd backend
+    
+    # Create a virtual environment (optional but recommended)
+    python -m venv venv
+    # Activate: .\venv\Scripts\activate (Windows) or source venv/bin/activate (Mac/Linux)
 
-## 📝 Scripts
+    # Install dependencies
+    pip install -r requirements.txt
 
--   `npm run dev`: Starts the Vite development server.
--   `npm run build`: Builds the app for production.
--   `npm run preview`: Locally preview the production build.
+    # Run migrations
+    python manage.py migrate
+
+    # Start the server
+    python manage.py runserver
+    ```
+
+4.  **Access the App**
+    -   Frontend: `http://localhost:5173`
+    -   Backend API: `http://localhost:8000`
 
 ## 🤝 Contributing
 
