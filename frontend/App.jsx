@@ -24,11 +24,14 @@ function ScrollToTop() {
 }
 
 const App = () => {
+  const location = useLocation();
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
+
   return (
     <AuthProvider>
       <BooksProvider>
-        <div className="flex flex-col min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200">
-          <Header />
+        <div className={`flex flex-col min-h-screen ${isAuthPage ? '' : 'bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200'}`}>
+          {!isAuthPage && <Header />}
           <ScrollToTop />
           <main className="flex-grow">
             <Routes>
@@ -41,7 +44,7 @@ const App = () => {
               <Route path="/signup" element={<SignupPage />} />
             </Routes>
           </main>
-          <Footer />
+          {!isAuthPage && <Footer />}
         </div>
       </BooksProvider>
     </AuthProvider>

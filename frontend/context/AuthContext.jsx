@@ -13,10 +13,10 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      // Optionally verify token with backend
-      // For now, just assume valid if present, or decode if JWT (but we use simple token)
-      // We might want to fetch user details here
-      setUser({ username: localStorage.getItem('username') });
+      setUser({ 
+        username: localStorage.getItem('username'),
+        name: localStorage.getItem('username'),
+      });
     }
     setLoading(false);
   }, [token]);
@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       if (response.ok) {
         setToken(data.token);
-        setUser({ username: data.username });
+        setUser({ username: data.username, name: data.username });
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
         return { success: true };
@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ username, email, password }),
       });
       if (response.ok) {
-        // Auto login after signup? or just return success
         return { success: true };
       } else {
         const data = await response.json();
@@ -63,6 +62,59 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       return { success: false, error: 'Network error' };
+    }
+  };
+
+  /**
+   * Social login: verifies provider access token with the backend.
+   * @param {string} provider - 'google' or 'github'
+   * @param {string} accessToken - OAuth access token from the provider
+   */
+  const socialLogin = async (provider, accessToken) => {
+    try {
+      const response = await fetch(`${API_URL}/api/social-login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ provider, access_token: accessToken }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setToken(data.token);
+        setUser({ username: data.username, name: data.username });
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('username', data.username);
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || 'Social login failed' };
+      }
+    } catch (error) {
+      return { success: false, error: 'Network error during social login' };
+    }
+  };
+
+  /**
+   * Exchange a GitHub authorization code for an access token via the backend.
+   * @param {string} code - GitHub authorization code
+   */
+  const exchangeGithubCode = async (code) => {
+    try {
+      const response = await fetch(`${API_URL}/api/github/exchange-code/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code }),
+      });
+      const data = await response.json();
+      if (response.ok && data.access_token) {
+        return { success: true, access_token: data.access_token };
+      } else {
+        return { success: false, error: data.error || 'Failed to exchange code' };
+      }
+    } catch (error) {
+      return { success: false, error: 'Network error during code exchange' };
     }
   };
 
@@ -74,7 +126,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, token, login, signup, socialLogin, exchangeGithubCode, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
